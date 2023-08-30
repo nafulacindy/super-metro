@@ -1,0 +1,228 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.logo h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+nav ul {
+    display: flex;
+    list-style-type: none;
+}
+
+nav ul li {
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+}
+/* Hero Section */
+.hero-section {
+    display: flex;
+    background-color: #f9f9f9; /* Set your desired background color here */
+    padding: 100px 0; /* Adjust the padding as needed for spacing */
+    text-align: center;
+  }
+  
+  .hero-content {
+    max-width: 600px; /* Set the maximum width of the content */
+    margin: 0 auto; /* Center the content horizontally */
+  }
+  
+  .hero-content h1 {
+    font-size: 36px; /* Set the font size for the main heading */
+    color: #333; /* Set the color for the main heading */
+    margin-bottom: 20px; /* Adjust the margin as needed */
+  }
+  
+  .hero-content p {
+    font-size: 18px; /* Set the font size for the paragraph */
+    color: #666; /* Set the color for the paragraph */
+    margin-bottom: 30px; /* Adjust the margin as needed */
+  }
+  
+  .hero-content ul {
+    display: flex;
+    flex-direction: column; /* Display list items in a column */
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px; /* Adjust the margin as needed */
+  }
+  
+  .hero-content li {
+    font-size: 16px; /* Set the font size for list items */
+    color: #444; /* Set the color for list items */
+    margin-bottom: 10px; /* Adjust the margin as needed */
+  }
+  
+  .hero-content i {
+    margin-right: 10px; /* Add some spacing between the icon and text */
+  }
+
+  /* CSS for the Top Destinations Section */
+
+/* Styling for the top destinations container */
+.top-destinations {
+    padding: 50px 0;
+}
+
+/* Styling for the top destinations heading */
+.top-destinations h2 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+/* Styling for the destination grid */
+.destination-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* Styling for each destination item */
+.destination-item {
+    text-align: center;
+}
+
+/* Styling for the destination image */
+.destination-item img {
+    width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Styling for the destination title */
+.destination-item h3 {
+    font-size: 18px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* CSS for the Bus Service Information Section */
+
+/* Styling for the bus info container */
+.bus-info-section {
+    padding: 50px 0;
+}
+
+/* Styling for the bus info heading */
+.bus-info-section h2 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+/* Styling for the bus info grid */
+.bus-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* Styling for each bus info item */
+.bus-info-item {
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Styling for the info label */
+.info-label {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Styling for the info value */
+.info-value {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+/* Add your other CSS styles here */
+
+/* Footer styles */
+footer {
+    background-color: #f0f0f0;
+    padding: 20px;
+  }
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .contact-info,
+  .top-routes,
+  .back-to-top {
+    flex-basis: 30%;
+    margin-bottom: 20px;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  ul li {
+    margin-bottom: 5px;
+  }
+  
+  .back-to-top {
+    display: block;
+    text-align: center;
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .back-to-top:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsive styles */
+  @media screen and (max-width: 768px) {
+    .contact-info,
+    .top-routes,
+    .back-to-top {
+      flex-basis: 100%;
+    }
+  }
+  
+  
+  
+  
+ 
+  
