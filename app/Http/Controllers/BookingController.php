@@ -10,10 +10,19 @@ use App\Models\Route;
 use App\Models\SeatReservation;
 use App\Models\Passenger;
 use App\Models\Payment;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+
+
 
 
 class BookingController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function selectSeats(Request $request)
     {
             $pickupLocation = $request->input('pickup_location');
@@ -47,49 +56,43 @@ class BookingController extends Controller
 
     public function seatSelection(Request $request, $busId, $scheduledTime)
     {
-       
         $bus = Bus::find($busId);
-        $bookedSeats = SeatReservation::where('bus_id', $busId)
-            
-        
-            ->pluck('seat_number');
-
     
-        
+        // Retrieve pickup location and destination from session
+        $pickupLocation = session('pickup_location');
+        $destination = session('destination');
+    
         if ($request->isMethod('post')) {
-            $request->validate([
-                'seat_number' => [
-                    'required',
-                    'integer',
-                    'min:1',
-                    'max:' . $bus->seating_capacity,
-                    Rule::notIn($bookedSeats), // Check if the selected seat is not already booked
-                ],
-            ], [
-                'seat_number.not_in' => 'The selected seat is already booked. Please choose another seat.',
-            ]);
-
+            $selectedSeatNumber = $request->input('selected_seat');
+            \Log::info('Selected Seat Number:', [$selectedSeatNumber]);
+    
+            // Validate the selected seat number
+            // Add your validation logic here
+    
+            // Store the selected seat in the session
             $request->session()->put('selected_seat', [
                 'bus_id' => $busId,
-                'scheduled_time' => $request->input('scheduled_time'),
-                'seat_number' => $request->input('seat_number'),
+                'scheduled_time' => $scheduledTime,
+                'seat_number' =>  $selectedSeatNumber,
             ]);
     
-         // Redirect to the enterDetails view to allow users to fill in their personal details
             return redirect()->route('bookings.enterDetails');
         }
-        
-        $selectedSeat = $request->session()->get('selected_seat');
-
+    
+        // Other logic for displaying available seats
+    
         return view('bookings.seat_selection', [
             'bus' => $bus,
-            'bookedSeats' => $bookedSeats,
+            'pickupLocation' => $pickupLocation,
+            'destination' => $destination,
             'scheduledTime' => $scheduledTime,
-            'selectedSeat' => $selectedSeat,
-    
         ]);
-    
     }
+    
+    
+    
+    
+    
     
     public function enterDetails(Request $request)
     {
@@ -97,7 +100,7 @@ class BookingController extends Controller
          // Retrieve the necessary data from the session or input
          $busId = $request->input('bus_id');
          $scheduledTime = $request->input('scheduled_time');
-         $seatNumber = $request->input('seat_number');
+         $selectedSeatNumber = $request->input('seat_number');
          $pickupLocation = session('pickup_location');
          $destination = session('destination');
 
@@ -106,7 +109,7 @@ class BookingController extends Controller
          session([
              'bus_id' => $busId,
              'scheduled_time' => $scheduledTime,
-             'seat_number' => $seatNumber,
+             'seat_number' => $selectedSeatNumber,
          ]);
     
           // Check if seat_number is stored in the session
@@ -122,7 +125,7 @@ class BookingController extends Controller
              'busId' => $busId,
              'bus' => $bus,
              'scheduledTime' => $scheduledTime,
-             'seatNumber' => $seatNumber,
+             'selectedSeatNumber' => $selectedSeatNumber,
              // You can pass other data here if needed
          ]);
     }
@@ -139,7 +142,7 @@ class BookingController extends Controller
     // Retrieve session data
     $busId = session('bus_id');
     $scheduledTime = session('scheduled_time');
-    $seatNumber = session('seat_number');
+    $selectedSeatNumber = session('seat_number');
     $pickupLocation = session('pickup_location');
     $destination = session('destination');
 
@@ -148,6 +151,7 @@ class BookingController extends Controller
         'name' => $request->input('name'),
         'email' => $request->input('email'),
         'contact_no' => $request->input('contact_no'),
+        'user_id' => Auth::id(),
         // Set other attributes here
     ]);
     $passenger->save();
@@ -168,7 +172,7 @@ class BookingController extends Controller
         'passenger_id' => $passenger->passenger_id, // Assuming 'id' is the primary key of the Passenger model
         'booking_id' => $booking->booking_id,
         'bus_id' => $busId,
-        'seat_number' => $seatNumber,
+        'seat_number' => $selectedSeatNumber,
         // Set other attributes here
     ]);
     $seatReservation->save();
@@ -186,7 +190,7 @@ public function payment(Request $request, $booking_id)
      // Retrieve pickup location and destination from session
      $pickupLocation = session('pickup_location');
      $destination = session('destination');
-     $seatNumber = session('seat_number');
+     $selectedSeatNumber = session('seat_number');
     
      // Retrieve the booking record
      $booking = Bookings::findOrFail($booking_id);
@@ -207,7 +211,7 @@ public function payment(Request $request, $booking_id)
         'passenger' => $passenger,
         'bus' => $bus,
         'scheduledTime' => $booking->scheduled_time,
-        'seatNumber' => $seatNumber,
+        'selectedSeatNumber' => $selectedSeatNumber,
         'fare' => $fare,
         'booking' => $booking,
     ]);
@@ -215,7 +219,7 @@ public function payment(Request $request, $booking_id)
 
 public function storePayment(Request $request, $booking_id)
 {
-    $seatNumber = session('seat_number');
+    $selectedSeatNumber = session('seat_number');
     // Retrieve the booking record
     $booking = Bookings::findOrFail($booking_id);
     $passenger = Passenger::findOrFail($booking->passenger_id);
@@ -255,7 +259,7 @@ public function storePayment(Request $request, $booking_id)
             'passenger' => $passenger,
             'bus' => $bus,
             'scheduledTime' => $booking->scheduled_time,
-            'seatNumber' => $seatNumber, // Pass the seat reservations to the confirmation view
+            'selectedSeatNumber' => $selectedSeatNumber, // Pass the seat reservations to the confirmation view
             'fare' => $fare,
             'paymentMethod' => 'M-Pesa', // You can modify this based on your logic
             'paymentDate' => now(), // You can modify this based on your logic
@@ -264,12 +268,13 @@ public function storePayment(Request $request, $booking_id)
 
     public function confirmation($booking_id)
 {
-    $seatNumber = session('seat_number');
+    $selectedSeatNumber = session('seat_number');
     // Retrieve necessary data from the database
     $booking = Bookings::findOrFail($booking_id);
     $passenger = Passenger::findOrFail($booking->passenger_id);
     $bus = Bus::findOrFail($booking->bus_id);
-
+    
+    // $fare = $booking->calculateFare();
     // You can add more logic here if needed
 
     return view('bookings.confirmation', [
@@ -277,17 +282,90 @@ public function storePayment(Request $request, $booking_id)
         'passenger' => $passenger,
         'bus' => $bus,
         'scheduledTime' => $booking->scheduled_time,
-        'seatNumber' => $seatNumber, // Make sure to get the seat number from where it's stored
+        'selectedSeatNumber' => $selectedSeatNumber, // Make sure to get the seat number from where it's stored
         'fare' => $fare, // Retrieve fare based on your logic
         'paymentMethod' => 'M-Pesa', // You can modify this based on your logic
         'paymentDate' => now(), // You can modify this based on your logic
     ]);
-}
-
     
 
+    
+}
+public function bookingHistory()
+{
+    // Get the ID of the logged-in user
+    $userId = Auth::id();
 
+    // Find the Passenger based on the user_id
+    $passenger = Passenger::where('user_id', $userId)->first();
+
+    // Check if the passenger exists
+    if (!$passenger) {
+        // Handle case where passenger is not found
+        return "No passenger found with the specified user ID.";
     }
+
+    // Retrieve the booking history for the passenger
+    $bookings = $passenger->bookings()->with('bus')->orderByDesc('created_at')->get();
+
+    // Check if any bookings were found
+    if ($bookings->isEmpty()) {
+        // Handle case where no bookings were found
+        return "No bookings found for this passenger.";
+    }
+
+    // Pass the $bookings variable to the view
+    return view('booking_history', compact('bookings'));
+}
+public function cancel($booking_id)
+    {
+        try {
+            // Find the booking with the passenger relationship
+            $booking = Bookings::with('passenger')->find($booking_id);
+
+            // Check if the booking exists
+            if (!$booking) {
+                return redirect()->back()->with('error', 'Booking not found.');
+            }
+
+            // Check if the logged-in user owns the booking
+            if ($booking->passenger && $booking->passenger->user_id !== Auth::id()) {
+                return redirect()->back()->with('error', 'You are not authorized to cancel this booking.');
+            }
+
+            // Update the booking status to "Cancelled"
+            $booking->status = 'Cancelled';
+            $booking->save();
+
+            // If update was successful, redirect back with a success message
+            return redirect()->route('booking.history')->with('success', 'Booking has been cancelled successfully.');
+        } catch (\Exception $e) {
+            // Handle any exceptions here
+            return redirect()->route('booking.history')->with('error', 'Failed to cancel booking. Error: '.$e->getMessage());
+        }
+    }
+    public function rebook($booking_id)
+{
+    // Find the booking by ID
+    $booking = Bookings::find($booking_id);
+
+    // Check if the booking exists
+    if (!$booking) {
+        return redirect()->back()->with('error', 'Booking not found.');
+    }
+
+    // Check if the booking is cancelled
+    if ($booking->status !== 'Cancelled') {
+        return redirect()->back()->with('error', 'Booking is not cancelled.');
+    }
+
+    // Logic for rebooking
+    // For simplicity, let's redirect to the beginning of the booking process
+    return redirect()->route('bookings.selectSeats')->with('success', 'Booking rebooked successfully.');
+}
+}
+
+
 
 
        

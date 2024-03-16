@@ -42,6 +42,13 @@
                 <x-button class="ml-4">
                     {{ __('Log in') }}
                 </x-button>
+            </div><br>
+            <div class="mt-4">
+              <x-button class="ml-4">
+             <a href="{{ route('admin.login') }}">
+             {{ __('Login as Admin') }}
+             </a>
+             </x-button>
             </div>
         </form>
     </x-authentication-card>

@@ -9,11 +9,11 @@ class Passenger extends Model
 {
     use HasFactory;
     protected $primaryKey = 'passenger_id';
-    protected $fillable = ['name', 'email', 'contact_no'];
+    protected $fillable = ['name', 'email', 'contact_no','user_id'];
 
     public function bookings()
     {
-        return $this->hasMany(Booking::class, 'passenger_id');
+        return $this->hasMany(Bookings::class, 'passenger_id');
     }
 
     public function seatReservations()

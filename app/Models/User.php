@@ -3,6 +3,9 @@
 namespace App\Models;
 use App\Models\Bookings;
 
+use App\Models\PaymentMethod;
+
+
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -19,7 +22,7 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
-    use Notifiable, HasRoles;
+    
 
     /**
      * The attributes that are mass assignable.
@@ -30,8 +33,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'user_type',
-        'sacco_code',
+        
     ];
 
     /**
@@ -71,10 +73,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Bookings::class, 'passenger_id');
     }
+    public function hasRole(string $role)
+    {
+        return $this->role === $role;
+    }
+    public function paymentMethods(): HasMany
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
 
     
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class);
-    }
+    
 }

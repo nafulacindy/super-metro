@@ -9,13 +9,7 @@
         <form method="POST" action="{{ route('register') }}">
             @csrf
 
-            <div class="mt-4">
-                <label for="user_type" class="block font-medium text-sm text-gray-700">User Type</label>
-                <select name="user_type" id="user_type" class="mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-indigo-500 focus:bg-white focus:ring-0">
-                    <option value="regular">Passenger</option>
-                    <option value="admin">Sacco Member</option>
-                </select>
-            </div>
+            
 
             <div>
                 <x-label for="name" value="{{ __('Name') }}" />
@@ -37,11 +31,7 @@
                 <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
             </div>
 
-            <div class="mt-4" id="sacco_code_field">
-                  <x-label for="sacco_code" value="{{ __('Sacco Code') }}" />
-                  <x-input id="sacco_code" class="block mt-1 w-full" type="text" name="sacco_code" :value="old('sacco_code')" />
-           </div>
-
+           
 
 
             @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
@@ -72,15 +62,5 @@
             </div>
         </form>
 
-        <script>
-               document.getElementById('user_type').addEventListener('change', function() {
-               const saccoCodeField = document.getElementById('sacco_code_field');
-              if (this.value === 'admin') {
-                      saccoCodeField.style.display = 'block';
-              } else {
-                           saccoCodeField.style.display = 'none';
-                }
-               });
-         </script>
-    </x-authentication-card>
+           </x-authentication-card>
 </x-guest-layout>

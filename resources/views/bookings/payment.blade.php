@@ -8,7 +8,7 @@
             <p class="card-text">Passenger: {{ $passenger->name }}</p>
             <p class="card-text">Bus: {{ $bus->registration_number }}</p>
             <p class="card-text">Scheduled Time: {{ $scheduledTime }}</p>
-            <p class="card-text">Seat Number: {{ $seatNumber }}</p>
+            <p class="card-text">Seat Number: {{ $selectedSeatNumber }}</p>
             <p class="card-text">Fare: {{ $fare }}</p>
             
             

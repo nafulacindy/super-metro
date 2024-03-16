@@ -15,6 +15,11 @@ class TaskController extends Controller
     {
         //
     }
+    public function showTaskView()
+{
+    return view('tasks'); // This assumes that 'task.blade.php' is located in the 'resources/views' directory
+}
+
 
     /**
      * Show the form for creating a new resource.

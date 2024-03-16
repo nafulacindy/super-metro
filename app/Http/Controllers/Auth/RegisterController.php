@@ -21,7 +21,7 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
-        dd($request->all()); 
+         
         $this->validator($request->all())->validate();
 
         $user = $this->create($request->all());
@@ -43,8 +43,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'user_type' => ['required', 'string', Rule::in(['admin', 'regular'])],
-
+            
         ]);
     }
 
@@ -56,26 +55,13 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
 {
-    // Assign role based on user_type
-    if ($data['user_type'] === 'admin') {
-        $role = Role::where('name', 'admin')->first();
-        if ($role) {
-            $user->roles()->attach($role->id);
-        }
-    } else {
-        $role = Role::where('name', 'regular')->first();
-        if ($role) {
-            $user->roles()->attach($role->id);
-        }
-    }
-
+    
     // Validate the registration data
     return User::create([
         'name' => $data['name'],
         'email' => $data['email'],
         'password' => Hash::make($data['password']),
-        'user_type' => ($data['user_type'] === 'admin') ? 'admin' : 'regular',
-        'sacco_code' => ($data['user_type'] === 'admin') ? $data['sacco_code'] : null,
+        'role' => 'user', // Set the default role to 'user'
     ]);
 
 

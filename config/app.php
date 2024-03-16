@@ -183,12 +183,15 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        
 
 
 
         /*
          * Package Service Providers...
          */
+        
+
 
         /*
          * Application Service Providers...
@@ -200,6 +203,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 
@@ -216,6 +220,8 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'View' => Illuminate\Support\Facades\View::class,
+
     ])->toArray(),
 
 ];

@@ -11,18 +11,17 @@ return new class extends Migration
      *
      * @return void
      */
-    
-      public function up()
+    public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('sacco_code')->nullable();
+        Schema::table('payment_methods', function (Blueprint $table) {
+            $table->string('payment_methodinfo')->nullable();
         });
     }
 
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('sacco_code');
+        Schema::table('payment_methods', function (Blueprint $table) {
+            $table->dropColumn('payment_methodinfo');
         });
     }
 };
