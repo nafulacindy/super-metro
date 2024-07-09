@@ -159,7 +159,7 @@
           <img src="" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="user/profile" class="d-block">{{ Auth::user()->name }}</a>
+          <a href="{{ route('profile.show') }}" class="d-block">{{ Auth::user()->name }}</a>
         </div>
       </div>
 
@@ -167,7 +167,7 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item menu-open">
-            <a href="dashboard" class="nav-link active">
+            <a href="{{ route('dashboard') }}" class="nav-link active">
              
               <p>
                 Dashboard
@@ -177,16 +177,17 @@
             
           
           <li class="nav-item">
-            <a href="create" class="nav-link">
+            <a href="{{ route('payment-methods.create') }}" class="nav-link">
               <i class="fas fa-wallet"></i>
               <p class="text">My Wallet</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="booking/history" class="nav-link">
+            <a href="{{ route('booking.history') }}" class="nav-link">
              <i class="fas fa-history"></i>
              <p>Booking History</p>
             </a>
+          </li>
           </li>
           <li class="nav-item">
             <a href="contact" class="nav-link">
@@ -196,6 +197,23 @@
               <p>Help</p>
             </a>
           </li>
+          <li class="nav-item">
+            
+          <div class="navbar">
+    <!-- Other navbar items -->
+
+    <!-- Log Out Link -->
+    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+    <i class="fas fa-sign-out-alt"></i> Log Out
+    </a>
+
+    <!-- Logout Form -->
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+</div>
+            
+          
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -229,6 +247,7 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <!-- jQuery -->
 <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>

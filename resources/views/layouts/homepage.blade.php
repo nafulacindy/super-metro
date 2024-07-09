@@ -38,8 +38,8 @@
             
                 <ul>
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/bus-routes">Bus Routes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/about-us">About Us</a></li>
+                    
+                    
                     <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Register</a></li>
@@ -47,15 +47,7 @@
             
 
         </div>
-        <div class="hero">
-             <!-- <h1>Book affordable Matatu rides.</h1>
-             <p>Get on board with CityBus and experience the most convenient way to travel.</p> -->
-              
-             <!-- <div>
-                <button type= "button"><span></span>Book Now</button>
-                <button type= "button"><span></span>Login</button>
-              </div> -->
-        </div>
+     
         < <div class="container_d">
         
 

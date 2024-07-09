@@ -9,12 +9,12 @@ use App\Models\PaymentMethod;
 class PaymentMethodController extends Controller
 {
     public function create()
-{
-    $user = Auth::user();
-    $paymentMethods = $user->paymentMethods;
+    {
+        $user = Auth::user();
+        $userPaymentMethods = $user->paymentMethods; // Adjusted variable name
 
-    return view('create', compact('paymentMethods'));
-}
+        return view('create', compact('userPaymentMethods')); // Adjusted variable name
+    }
 
     public function store(Request $request)
     {
@@ -29,17 +29,9 @@ class PaymentMethodController extends Controller
         $paymentMethod = new PaymentMethod();
         $paymentMethod->user_id = $user->id;
         $paymentMethod->payment_method = $request->payment_method;
-        
+        $paymentMethod->payment_methodinfo = $request->payment_methodinfo; // Assign the correct value
 
-        if ($request->payment_method === 'card') {
-            $paymentMethod->payment_methodinfo = $request->card_number;
-        } elseif ($request->payment_method === 'mpesa') {
-            $paymentMethod->payment_methodinfo = $request->mpesa_phone;
-        } elseif ($request->payment_method === 'sasapay') {
-            $paymentMethod->payment_methodinfo = $request->sasapay_email;
-        }
-    
-        $paymentMethod->save();// Redirect or do something else after saving
+        $paymentMethod->save();
 
         return redirect()->route('payment-methods.create')->with('success', 'Payment method added successfully.');
     }

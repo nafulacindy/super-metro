@@ -2,21 +2,23 @@
 
 @section('content')
 
-    <h1>Select Seat</h1>
+    <!-- <h1 class="text-center text-white">Select Seat</h1> -->
 
-    <div>
-        <h3>Selected Route Details:</h3>
-        <p>Pickup Location: <strong>{{ $pickupLocation }}</strong></p>
-        <p>Destination: <strong>{{ $destination }}</strong></p>
-        <p>Scheduled Time: <strong>{{ $scheduledTime }}</strong></p>
-    </div>
+    
+        <div class="card-body">
+            <h3>Selected Route Details:</h3>
+            <p>Pickup Location: <strong>{{ $pickupLocation }}</strong></p>
+            <p>Destination: <strong>{{ $destination }}</strong></p>
+            <p>Scheduled Time: <strong>{{ $scheduledTime }}</strong></p>
+        </div>
+    
 
-    <h3>Seat Chart</h3>
+    <h3 class= "text-center text-white"><br>Seat Chart</h3>
 
     <div class="seat-chart">
         @for ($i = 1; $i <= $bus->seating_capacity; $i++)
             <div class="seat" data-seat="{{ $i }}">
-                <span>Seat {{ $i }}</span>
+                S{{ $i }}
             </div>
         @endfor
     </div>
@@ -27,7 +29,9 @@
         <input type="hidden" name="scheduled_time" value="{{ $scheduledTime }}">
         <input type="hidden" name="seat_number" id="selectedSeatInput">
 
-        <button type="submit" class="btn btn-primary">Reserve Seat</button>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary">Reserve Seat</button>
+        </div>
     </form>
 
 @endsection
@@ -35,27 +39,61 @@
 @section('styles')
     <style>
         .seat-chart {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
+            justify-content: center;
         }
 
         .seat {
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 50px;
             height: 50px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #f0f0f0;
+            background-color: rgba(0, 150, 136, 0.5);
             font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .seat:hover {
+            background-color: #009688;
+            color: white;
         }
 
         .selected {
-                background-color: #6495ed; /* Cornflower Blue */
-                  color: white;
+            background-color: #6495ed; /* Cornflower Blue */
+            color: white;
         }
+
+        .btn-primary {
+            background-color: #009688;
+            border-color: #009688;
+        }
+
+        .btn-primary:hover {
+            background-color: #00796b;
+            border-color: #00796b;
+        }
+
+        /* Adjust styles for hover state */
+        .card-body {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            padding: 20px;
+            transition: background-color 0.3s;
+            color: white;
+            padding bottom: 40px;
+        }
+
+        .card-body:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
     </style>
 @endsection
 

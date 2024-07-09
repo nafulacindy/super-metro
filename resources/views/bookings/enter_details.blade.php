@@ -29,9 +29,12 @@
         color: white;
         text-align: center;
     }
-    .card p{
+    /* .card p{
         color: white;
-        text-align: center;
+        text-align: center; */
+    /* } */
+    .card-body.card-text{
+        color: white;
     }
     
     .card-header{

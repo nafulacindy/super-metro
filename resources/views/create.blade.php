@@ -9,7 +9,7 @@
         </div>
         <div class="card-body">
             <!-- Add payment method form -->
-            <form method="POST" action="{{ route('payment-methods.store') }}">
+            <form method="POST" action="{{ route('payment-methods.store') }}" id="paymentMethodForm">
                 @csrf
                 <div class="form-group">
                     <label for="payment_method">Select Payment Method:</label>
@@ -25,26 +25,29 @@
                 <div id="card_fields" style="display: none;">
                     <!-- Card details fields -->
                     <label for="card_number">Card Number:</label>
-                    <input type="text" name="payment_methodinfo" id="card_number" class="form-control" placeholder="Card Number">
+                    <input type="text" name="card_number" id="card_number" class="form-control" placeholder="Card Number">
                     <!-- Add more card details fields as needed -->
                 </div>
 
                 <div id="mpesa_fields" style="display: none;">
                     <!-- M-Pesa details fields -->
                     <label for="mpesa_phone">M-Pesa Phone Number:</label>
-                    <input type="text" name="payment_methodinfo" id="mpesa_phone" class="form-control" placeholder="M-Pesa Phone Number">
+                    <input type="text" name="mpesa_phone" id="mpesa_phone" class="form-control" placeholder="M-Pesa Phone Number">
                     <!-- Add more M-Pesa details fields as needed -->
                 </div>
 
                 <div id="sasapay_fields" style="display: none;">
                     <!-- SasaPay details fields -->
                     <label for="sasapay_email">SasaPay Email:</label>
-                    <input type="email" name="payment_methodinfo" id="sasapay_email" class="form-control" placeholder="SasaPay Email">
+                    <input type="email" name="sasapay_email" id="sasapay_email" class="form-control" placeholder="SasaPay Email">
                     <!-- Add more SasaPay details fields as needed -->
                 </div>
 
+                <input type="hidden" name="payment_methodinfo" id="payment_methodinfo">
+
                 <button type="submit" class="btn btn-primary">Add Payment Method</button>
             </form>
+
         </div>
     </div>
 
@@ -55,10 +58,10 @@
         </div>
         <div class="card-body">
             <ul>
-                @foreach($paymentMethods as $paymentMethod)
-                <li>{{ $paymentMethod->payment_method }} - 
+                @foreach($userPaymentMethods as $userPaymentMethod) <!-- Adjusted variable name -->
+                <li>{{ $userPaymentMethod->payment_method }} - 
                     <?php 
-                        $paymentInfo = $paymentMethod->payment_methodinfo;
+                        $paymentInfo = $userPaymentMethod->payment_methodinfo; // Adjusted variable name
                         $visibleLength = max(round(strlen($paymentInfo) * 0.4), 4);
                         $maskedString = substr($paymentInfo, 0, $visibleLength) . str_repeat('*', strlen($paymentInfo) - $visibleLength);
                         echo $maskedString;
@@ -88,24 +91,41 @@
 
 @endsection
 
+
 @section('scripts')
 <script>
     $(document).ready(function() {
-        $('#payment_method').change(function() {
-            var selectedMethod = $(this).val();
+    $('#payment_method').change(function() {
+        var selectedMethod = $(this).val();
 
-            // Hide all fields
-            $('#card_fields, #mpesa_fields, #sasapay_fields').hide();
+        // Hide all fields first and remove the 'required' attribute
+        $('#card_fields, #mpesa_fields, #sasapay_fields').hide().find('input').removeAttr('required');
 
-            // Show fields based on selected payment method
-            if (selectedMethod === 'card') {
-                $('#card_fields').show();
-            } else if (selectedMethod === 'mpesa') {
-                $('#mpesa_fields').show();
-            } else if (selectedMethod === 'sasapay') {
-                $('#sasapay_fields').show();
-            }
-        });
+        // Show fields based on selected payment method
+        if (selectedMethod === 'card') {
+            $('#card_fields').show().find('input').attr('required', true);
+        } else if (selectedMethod === 'mpesa') {
+            $('#mpesa_fields').show().find('input').attr('required', true);
+        } else if (selectedMethod === 'sasapay') {
+            $('#sasapay_fields').show().find('input').attr('required', true);
+        }
     });
+
+    // Submit form
+    $('#paymentMethodForm').submit(function(event) {
+        // Get the selected payment method
+        var selectedMethod = $('#payment_method').val();
+
+        // Set the corresponding payment method info field
+        if (selectedMethod === 'card') {
+            $('#payment_methodinfo').val($('#card_number').val());
+        } else if (selectedMethod === 'mpesa') {
+            $('#payment_methodinfo').val($('#mpesa_phone').val());
+        } else if (selectedMethod === 'sasapay') {
+            $('#payment_methodinfo').val($('#sasapay_email').val());
+        }
+    });
+});
+
 </script>
 @endsection

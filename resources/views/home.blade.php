@@ -21,7 +21,7 @@
 
     .card {
         margin-top: 20px;
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(0, 0, 0, 0.75);
         border: 1px solid rgba(255, 255, 255, 0.3);
         padding: 20px;
         transition: background-color 0.3s ease;

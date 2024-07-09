@@ -12,6 +12,12 @@ use App\Http\Controllers\BusController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\MpesaPaymentController;
+use App\Http\Controllers\FeedbackController;
+
+
+
+
 
 
 /*
@@ -51,12 +57,8 @@ Route::middleware('guest')->group(function () {
 
 
 Route::get('/tasks', [TaskController::class, 'showTaskView'])->name('tasks.view');
-Route::post('/payment-methods', [PaymentController::class, 'store'])->name('payment-method.store');
-Route::post('/apply-promo', [PaymentController::class, 'applyPromo'])->name('payment.apply-promo');
-
-
-
-Route::resource('payment', \App\Http\Controllers\PaymentController::class);
+Route::post('/payment-methods', [PaymentMethodController::class, 'store'])->name('payment-method.store');
+Route::post('/apply-promo', [PaymentMethodController::class, 'applyPromo'])->name('payment.apply-promo');
 
 Route::resource('home', \App\Http\Controllers\HomeController::class);
 Route::resource('contact', \App\Http\Controllers\ContactController::class);
@@ -73,18 +75,33 @@ Route::match(['get', 'post'],'/bookings/seat-selection/{busId}/{scheduledTime}',
 Route::match(['get', 'post'],'/bookings/enter-details', [BookingController::class, 'enterDetails'])->name('bookings.enterDetails');
 Route::match(['get', 'post'], '/bookings/submit-details', [BookingController::class, 'submitDetails'])->name('bookings.submitDetails');
 Route::match(['get', 'post'], '/bookings/payment/{booking_id}', [BookingController::class, 'payment'])->name('bookings.payment');
+Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+Route::post('/paypal/checkout', [PaymentController::class, 'processPayment'])->name('paypal.checkout');
+
+Route::post('/mpesa/initiate-payment', [MpesaPaymentController::class, 'initiatePayment'])->name('mpesa.initiatePayment');
+Route::post('/mpesa/callback', [MpesaPaymentController::class, 'handleCallback'])->name('mpesa.callback');
+
 
 Route::match(['get', 'post'],'/bookings/store-payment/{booking_id}', [BookingController::class, 'storePayment'])->name('bookings.storePayment');
 Route::get('/bookings/confirmation/{booking_id}', [BookingController::class, 'confirmation'])->name('bookings.confirmation');
 Route::get('/ticket/{booking_id}', [TicketController::class, 'download'])->name('ticket.download');
 Route::get('/booking/history', [BookingController::class, 'bookingHistory'])->name('booking.history');
-Route::delete('/booking/{booking_id}', [BookingController::class, 'cancel'])->name('booking.cancel');
+Route::post('/booking/{booking_id}/cancel', [BookingController::class, 'cancel'])->name('booking.cancel');
 Route::post('/bookings/{booking_id}/rebook', [BookingController::class, 'rebook'])->name('bookings.rebook');
 Route::get('/admin/login', [AdminController::class, 'showAdminLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'adminLogin']);
 
-Route::get('/payment-methods/create', [PaymentMethodController::class, 'create'])->name('payment-methods.create');
+ Route::get('/payment-methods/create', [PaymentMethodController::class, 'create'])->name('payment-methods.create');
 Route::post('/payment-methods/store', [PaymentMethodController::class, 'store'])->name('payment-methods.store');
+Route::get('/admin/dashboard', [\App\Http\Controllers\AdminPanelController::class, 'show'])->name('admin.dashboard');
+
+
+Route::get('/admin/feedback', [AdminController::class, 'feedback'])->name('admin.feedback');
+
+
+Route::get('/approve_bookings', [AdminPanelController::class, 'approveBookings'])->name('approve_bookings');
+Route::post('/submit-feedback', [FeedbackController::class, 'submitFeedback'])->name('submitFeedback');
+Route::post('/submit-lost-item-report', [FeedbackController::class, 'reportLostItem'])->name('submitLostItemReport');
 
 
 

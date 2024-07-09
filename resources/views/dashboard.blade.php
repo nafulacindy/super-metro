@@ -34,12 +34,12 @@
             </div>
         </div>
 
-        <!-- Calendar Card -->
-        <div class="card bg-green-200 overflow-hidden shadow-xl sm:rounded-lg hover:shadow-2xl">
+        <!-- Report Lost Items Card -->
+        <div class="card bg-yellow-200 overflow-hidden shadow-xl sm:rounded-lg hover:shadow-2xl">
             <div class="p-6">
-                <h3 class="text-lg font-semibold mb-3">Calendar</h3>
-                <!-- Calendar Container -->
-                <div id="calendar"></div>
+                <h3 class="text-lg font-semibold mb-3">Report Lost Items</h3>
+                <p class="mb-3">Have you lost something during your travel?</p>
+                <a href="#" class="text-blue-500 hover:text-blue-700" id="reportLostItemsLink">Report Now</a>
             </div>
         </div>
 
@@ -62,144 +62,107 @@
         </div>
     </div>
 
-    <!-- Feedback Modal -->
-    <div class="fixed z-10 inset-0 overflow-y-auto hidden" id="feedbackModal">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="bg-white rounded-lg w-full max-w-md p-6">
-                <h3 class="text-lg font-semibold mb-3">Give Feedback</h3>
-                <form id="feedbackForm">
-                    <div class="mb-4">
-                        <label for="feedback" class="block text-sm font-medium text-gray-700">Your Feedback:</label>
-                        <textarea id="feedback" name="feedback" rows="4" class="form-textarea mt-1 block w-full"></textarea>
-                    </div>
+   <!-- Report Lost Items Modal -->
+<div class="fixed z-10 inset-0 overflow-y-auto hidden" id="reportLostItemsModal">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-white rounded-lg w-full max-w-md p-6">
+            <h3 class="text-lg font-semibold mb-3">Report Lost Items</h3>
+            <form action="{{ route('submitLostItemReport') }}" method="post" id="reportLostItemsForm">
+
+                @csrf
+                <div class="mb-4">
+                    <label for="busRegistration" class="block text-sm font-medium text-gray-700">Bus Registration Number:</label>
+                    <input type="text" id="busRegistration" name="bus_registration" class="form-input mt-1 block w-full" placeholder="Enter Bus Registration Number">
+                    <label for="travelDate" class="block text-sm font-medium text-gray-700">Date of Travel:</label>
+                    <input type="text" id="travelDate" name="travelDate" class="form-input mt-1 block w-full" placeholder="Enter Date of Travel">
+                    <label for="luggageDescription" class="block text-sm font-medium text-gray-700">Luggage Description:</label>
+                    <input type="text" id="luggageDescription" name="luggageDescription" class="form-input mt-1 block w-full" placeholder="LuggageDescription">
+                </div>
+                <!-- Other input fields for lost item report -->
+                <div class="flex justify-end">
                     <button type="submit" class="bg-blue-800 text-white font-bold py-2 px-4 rounded hover:bg-blue-600">Submit</button>
-                </form>
-            </div>
+                    <button type="button" class="bg-gray-400 text-white font-bold py-2 px-4 rounded hover:bg-gray-300 ml-2" id="cancelReportLostItems">Cancel</button>
+                </div>
+                <p id="reportSuccessMessage" class="text-green-600 mt-2 hidden">Report sent successfully!</p>
+            </form>
         </div>
     </div>
-@endsection
+</div>
 
-@section('styles')
-    @parent
-    <style>
-        /* Additional custom styles */
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
+<!-- Feedback Modal -->
+<div class="fixed z-10 inset-0 overflow-y-auto hidden" id="feedbackModal">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-white rounded-lg w-full max-w-md p-6">
+            <h3 class="text-lg font-semibold mb-3">Give Feedback</h3>
+            <form action="{{ route('submitFeedback') }}" method="post" id="feedbackForm">
 
-        .card {
-            transition: transform 0.3s;
-        }
+                @csrf
+                <div class="mb-4">
+                    <label for="feedback" class="block text-sm font-medium text-gray-700">Your Feedback:</label>
+                    <textarea id="feedback" name="feedback" rows="4" class="form-textarea mt-1 block w-full"></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-blue-800 text-white font-bold py-2 px-4 rounded hover:bg-blue-600">Submit</button>
+                    <button type="button" class="bg-gray-400 text-white font-bold py-2 px-4 rounded hover:bg-gray-300 ml-2" id="cancelFeedback">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-        .card:hover {
-            transform: scale(1.1);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            z-index: 9999;
-            background-color: rgba(0, 0, 0, 0.5);
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            position: fixed;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 100%;
-            position: relative;
-            text-align: center;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            cursor: pointer;
-        }
-    </style>
 @endsection
 
 @section('scripts')
     @parent
-    <!-- Include FullCalendar.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/core/main.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/daygrid/main.min.js" defer></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/core/main.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/daygrid/main.min.css" rel="stylesheet">
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
+            const reportLostItemsLink = document.getElementById('reportLostItemsLink');
+            const reportLostItemsModal = document.getElementById('reportLostItemsModal');
+            const cancelReportLostItems = document.getElementById('cancelReportLostItems');
+            const reportSuccessMessage = document.getElementById('reportSuccessMessage');
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'dayGrid' ],
-                events: [
-                    {
-                        title: 'Event 1',
-                        start: '2024-08-01'
-                    },
-                    {
-                        title: 'Event 2',
-                        start: '2024-08-05'
-                    }
-                    // Add more events as needed
-                ]
+            reportLostItemsLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                reportLostItemsModal.classList.remove('hidden');
             });
 
-            calendar.render();
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+            cancelReportLostItems.addEventListener('click', function(event) {
+                event.preventDefault();
+                reportLostItemsModal.classList.add('hidden');
+            });
+
+            const reportLostItemsForm = document.getElementById('reportLostItemsForm');
+            reportLostItemsForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                // Simulate sending report data
+                setTimeout(function() {
+                    reportLostItemsModal.classList.add('hidden');
+                    reportSuccessMessage.classList.remove('hidden');
+                }, 1500);
+            });
+
             const feedbackLink = document.getElementById('feedbackLink');
             const feedbackModal = document.getElementById('feedbackModal');
-            const modalOverlay = document.createElement('div');
-            modalOverlay.classList.add('modal-overlay');
+            const cancelFeedback = document.getElementById('cancelFeedback');
 
             feedbackLink.addEventListener('click', function(event) {
                 event.preventDefault();
-                console.log('Feedback Link Clicked');
                 feedbackModal.classList.remove('hidden');
-                document.body.appendChild(modalOverlay);
-
-                // Focus on the textarea when modal opens
-                const feedbackTextarea = feedbackModal.querySelector('textarea[name="feedback"]');
-                feedbackTextarea.focus();
             });
 
-            modalOverlay.addEventListener('click', function() {
-                console.log('Modal Overlay Clicked');
+            cancelFeedback.addEventListener('click', function(event) {
+                event.preventDefault();
                 feedbackModal.classList.add('hidden');
-                document.body.removeChild(modalOverlay);
-            });
-
-            // Prevent modal from closing when clicking inside the modal content
-            feedbackModal.addEventListener('click', function(event) {
-                event.stopPropagation();
             });
 
             const feedbackForm = document.getElementById('feedbackForm');
 
             feedbackForm.addEventListener('submit', function(event) {
                 event.preventDefault();
-                const formData = new FormData(feedbackForm);
-                const feedbackValue = formData.get('feedback');
-                console.log('Feedback Submitted:', feedbackValue);
-                // You can add AJAX here to submit the form data
-
-                // To keep the modal open after submission, we'll just clear the input
-                feedbackTextarea.value = '';
+                // Simulate submitting feedback
+                setTimeout(function() {
+                    feedbackModal.classList.add('hidden');
+                }, 1500);
             });
         });
     </script>

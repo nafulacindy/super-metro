@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Feedback;
+use App\Models\LostItemReport;
 
 class AdminController extends Controller
 {
@@ -27,4 +29,18 @@ class AdminController extends Controller
                 return redirect()->route('admin.login')->with('error', 'Admin login failed. Please check your credentials.');
             }
 }
+    public function feedback()
+    {
+                // Retrieve feedback details from the database
+                $feedbacks = Feedback::all();
+
+                // Retrieve lost item report details from the database
+                $lostItemReports = LostItemReport::all();
+        
+                // Pass the data to the view
+                return view('admin.feedback', compact('feedbacks', 'lostItemReports'));
+        
+    }
+
+
 }

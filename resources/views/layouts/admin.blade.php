@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Super Metro</title>
+  <title>City Bus</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -131,10 +131,10 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
+          <img src="" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="user/profile" class="d-block">Alexander Pierce</a>
+          <a href="{{ route('profile.show') }}" class="d-block">{{ Auth::user()->name }}</a>
         </div>
       </div>
 
@@ -169,6 +169,38 @@
               <i class="far fa-calendar-alt"></i>
               <p>Manage Schedule</p>
             </a>
+          </li>
+          <!-- <li>
+    <a href="{{ route('admin.feedback') }}" class="flex items-center px-6 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+        
+        <span class="ml-2">Feedback</span>
+    </a>
+</li> -->
+
+          <li class="nav-item">
+            <a href="contact" class="nav-link">
+              <!-- <i class="far fa-clock"></i> -->
+              <i class="fas fa-question-circle"></i>
+
+              <p>Help</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            
+               <div class="navbar">
+                    <!-- Other navbar items -->
+
+                     <!-- Log Out Link -->
+                     <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                     <i class="fas fa-sign-out-alt"></i> Log Out
+                     </a>
+
+                     <!-- Logout Form -->
+                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                       @csrf
+                     </form>
+                 </div>
+            
           </li>
         </ul>
       </nav>
@@ -234,5 +266,6 @@
 <script src="{{ asset('dist/js/demo.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
+@yield('scripts')
 </body>
 </html>

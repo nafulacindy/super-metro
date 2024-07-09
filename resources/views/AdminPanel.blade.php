@@ -42,14 +42,16 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>53<sup style="font-size: 20px">%</sup></h3>
+                <h3>{{ $totalBookings }}</h3>
 
-                <p>Bounce Rate</p>
+                <p>Bookings</p>
               </div>
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{ route('approve_bookings') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+
+
             </div>
           </div>
           <!-- ./col -->
@@ -90,24 +92,17 @@
           <!-- Left col -->
           <section class="col-lg-7 connectedSortable">
             <!-- Custom tabs (Charts with tabs)-->
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">
-                  <i class="fas fa-chart-pie mr-1"></i>
-                  Sales
-                </h3>
-                <div class="card-tools">
-                  <ul class="nav nav-pills ml-auto">
-                    <li class="nav-item">
-                      <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Area</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
-                    </li>
-                  </ul>
-                </div>
-              </div><!-- /.card-header -->
-              <div class="card-body">
+            <!-- <div class="card">
+    <div class="card-header">Weekly Bookings Chart</div>
+    <div class="card-body">
+        @if(isset($chart))
+            {!! $chart->render() !!}
+        @else
+            <p>No chart data available.</p>
+        @endif
+    </div>
+</div> -->
+            <div class="card-body">
                 <div class="tab-content p-0">
                   <!-- Morris chart - Sales -->
                   <div class="chart tab-pane active" id="revenue-chart"
@@ -302,7 +297,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Add this at the end of the AdminPanel view blade file -->
 <!-- Add this at the end of the AdminPanel view blade file -->
-
+<!-- Modal -->
 <script>
     $(document).ready(function() {
         // Add item button click event

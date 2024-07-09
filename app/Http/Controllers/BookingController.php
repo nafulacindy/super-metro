@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Bookings;
 use App\Models\Bus;
 use App\Models\Route;
+use App\Models\PaymentMethod;
 use App\Models\SeatReservation;
 use App\Models\Passenger;
 use App\Models\Payment;
@@ -163,7 +164,7 @@ class BookingController extends Controller
         'pickup_location' => $pickupLocation,
         'destination' => $destination,
         'scheduled_time' => $scheduledTime,
-        'status' => 'Pending',
+        'status' => 'Approved',
     ]);
     $booking->save();
 
@@ -185,28 +186,30 @@ class BookingController extends Controller
 
 public function payment(Request $request, $booking_id)
 {
-     
-    
-     // Retrieve pickup location and destination from session
-     $pickupLocation = session('pickup_location');
-     $destination = session('destination');
-     $selectedSeatNumber = session('seat_number');
-    
-     // Retrieve the booking record
-     $booking = Bookings::findOrFail($booking_id);
-    
-     // Retrieve other related data
-     $passenger = Passenger::findOrFail($booking->passenger_id);
-     $bus = Bus::findOrFail($booking->bus_id);
-    
-     // Calculate fare and other necessary data
-     // Retrieve fare from the corresponding route
-     $route = Route::where('start_location', $pickupLocation)
-         ->where('end_location', $destination)
-         ->firstOrFail();
-     $fare = $route->fare;
+    // $paymentMethods = PaymentMethod::where('user_id', Auth::id())->get();
+    // Log::info($paymentMethods);
+    // // Retrieve pickup location and destination from session
+    $pickupLocation = session('pickup_location');
+    $destination = session('destination');
+    $selectedSeatNumber = session('seat_number');
 
-    
+    // Retrieve the booking record
+    $booking = Bookings::findOrFail($booking_id);
+
+    // Retrieve other related data
+    $passenger = Passenger::findOrFail($booking->passenger_id);
+    $bus = Bus::findOrFail($booking->bus_id);
+
+    // Calculate fare and other necessary data
+    // Retrieve fare from the corresponding route
+    $route = Route::where('start_location', $pickupLocation)
+        ->where('end_location', $destination)
+        ->firstOrFail();
+    $fare = $route->fare;
+
+    // Get payment methods for the user
+    $paymentMethods = PaymentMethod::where('user_id', Auth::id())->get();
+
     return view('bookings.payment', [
         'passenger' => $passenger,
         'bus' => $bus,
@@ -214,18 +217,18 @@ public function payment(Request $request, $booking_id)
         'selectedSeatNumber' => $selectedSeatNumber,
         'fare' => $fare,
         'booking' => $booking,
+        'paymentMethods' => $paymentMethods, // Pass the payment methods to the view
     ]);
 }
 
 public function storePayment(Request $request, $booking_id)
 {
-    $selectedSeatNumber = session('seat_number');
     // Retrieve the booking record
     $booking = Bookings::findOrFail($booking_id);
+
+    // Retrieve other related data
     $passenger = Passenger::findOrFail($booking->passenger_id);
-
     $bus = Bus::findOrFail($booking->bus_id);
-
 
     // Retrieve the fare amount from the route
     $pickupLocation = session('pickup_location');
@@ -233,38 +236,49 @@ public function storePayment(Request $request, $booking_id)
     $route = Route::where('start_location', $pickupLocation)
          ->where('end_location', $destination)
          ->firstOrFail();
-     $fare = $route->fare;
+    $fare = $route->fare;
 
-     // Retrieve the passenger ID from the booking record
-     $passenger_id = $booking->passenger_id;
-      // Retrieve the associated seat reservations
+    // Retrieve the passenger ID from the booking record
+    $passenger_id = $booking->passenger_id;
 
+    // Log payment details for debugging
+    \Log::info('Payment details:', [
+        'booking_id' => $booking_id,
+        'passenger_id' => $passenger_id,
+        'fare' => $fare,
+        'payment_method' => 'PayPal',
+        'status' => $request->input('paypal_status'), // Assuming the payment status is passed from PayPal
+        'payment_date' => now(), // Assuming the payment is made instantly
+    ]);
 
-    
-
-     // Store the payment
-     $payment = new Payment([
+    // Store the payment
+    $payment = new Payment([
         'booking_id' => $booking_id,
         'passenger_id' => $passenger_id,
         'amount' => $fare,
-        'payment_method' => 'M-Pesa',
-        'status' => 'Paid', // Assuming the payment is instantly considered as paid
+        'payment_method' => 'PayPal',
+        'status' => 'Paid', // Assuming the payment status is passed from PayPal
         'payment_date' => now(), // Assuming the payment is made instantly
-     ]);
-     $payment->save();
+    ]);
+    $payment->save();
+   // Store the fare value in the session
+    session(['fare' => $fare]);
 
-     
-     return view('bookings.confirmation', [
-            'booking' => $booking,
-            'passenger' => $passenger,
-            'bus' => $bus,
-            'scheduledTime' => $booking->scheduled_time,
-            'selectedSeatNumber' => $selectedSeatNumber, // Pass the seat reservations to the confirmation view
-            'fare' => $fare,
-            'paymentMethod' => 'M-Pesa', // You can modify this based on your logic
-            'paymentDate' => now(), // You can modify this based on your logic
-        ]);
-    }
+    // Flash success message
+    $request->session()->flash('success_message', 'Payment successful!');
+
+    // Redirect to the confirmation page
+    return redirect()->route('bookings.confirmation', [
+        'booking_id' => $booking_id,
+        'passenger' => $passenger,
+        'bus' => $bus,
+        'scheduledTime' => $booking->scheduled_time,
+        'selectedSeatNumber' => session('seat_number'),
+        'fare' => $fare,
+        'paymentMethod' => 'PayPal', // You can modify this based on your logic
+        'paymentDate' => now(), // You can modify this based on your logic
+    ]);
+}
 
     public function confirmation($booking_id)
 {
@@ -273,7 +287,9 @@ public function storePayment(Request $request, $booking_id)
     $booking = Bookings::findOrFail($booking_id);
     $passenger = Passenger::findOrFail($booking->passenger_id);
     $bus = Bus::findOrFail($booking->bus_id);
-    
+    // Retrieve the fare value from the session
+$fare = session('fare');
+
     // $fare = $booking->calculateFare();
     // You can add more logic here if needed
 
@@ -284,7 +300,7 @@ public function storePayment(Request $request, $booking_id)
         'scheduledTime' => $booking->scheduled_time,
         'selectedSeatNumber' => $selectedSeatNumber, // Make sure to get the seat number from where it's stored
         'fare' => $fare, // Retrieve fare based on your logic
-        'paymentMethod' => 'M-Pesa', // You can modify this based on your logic
+        'paymentMethod' => 'Paypal', // You can modify this based on your logic
         'paymentDate' => now(), // You can modify this based on your logic
     ]);
     
